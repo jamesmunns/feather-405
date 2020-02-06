@@ -1,0 +1,29 @@
+[tasks.objcopy]
+command = "cargo"
+args= [
+    "objcopy",
+    "--bin", "hello-405",
+    "--release",
+    "--",
+    "-O", "binary",
+    "target/thumbv7em-none-eabihf/release/hello-405.bin"
+]
+
+[tasks.dfu]
+command = "dfu-util"
+args = [
+    "-d", "0483:df11",
+    "-a", "0",
+    "-s", "0x08000000:leave",
+    "-D", "target/thumbv7em-none-eabihf/release/hello-405.bin"
+]
+dependencies = [
+    "objcopy",
+]
+
+[tasks.flash]
+command = "openocd"
+args = [
+    "-f", "openocd.cfg",
+    "-c", "program target/thumbv7em-none-eabihf/release/hello-405 reset"
+]
