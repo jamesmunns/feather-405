@@ -7,10 +7,19 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-stm32f4xx-hal = { version = "0.6.0", features = ["stm32f405", "rt" ] }
-cortex-m = "0.6"
-cortex-m-rt = "0.6"
-panic-reset = "0.1"
+cortex-m = { version = "0.6", features = ["inline-asm"] }
+cortex-m-rt = { version = "0.6" }
+panic-persist = "0.2.1"
+usb-device = "0.2.2"
+usbd-serial = "0.1.0"
+embedded-hal = "0.2.3"
+
+[dependencies.stm32f4xx-hal]
+version = "0.5.0"
+features = ["stm32f405", "rt", "synopsys-usb-otg", "usb_fs" ]
+git = "https://github.com/Disasm/stm32f4xx-hal"
+rev = "5f6727ed3927a67847dbc10375d01e05b5058fa5"
+
 
 [profile.release]
 lto             = true
@@ -27,3 +36,7 @@ debug           = true
 incremental     = false
 codegen-units   = 1
 opt-level       = 0
+
+[patch.crates-io.synopsys-usb-otg]
+git = "https://github.com/stm32-rs/synopsys-usb-otg"
+rev = "7043f6617b5c752e9dda2b42114f3a428256e126"
