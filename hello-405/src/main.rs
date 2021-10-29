@@ -152,8 +152,6 @@ unsafe fn before_main() {
         static mut _panic_dump_start: u8;
     }
 
-    use cortex_m::register::msp;
-
     let start_ptr = &mut _panic_dump_start as *mut u8;
 
     // Panic-persist sets a flag to the start of the dump region
@@ -162,14 +160,9 @@ unsafe fn before_main() {
         // Clear the flag
         start_ptr.cast::<usize>().write_unaligned(0x00000000);
 
-        // The DFU bootloader's reset vector and initial stack pointer
-        const SYSMEM_MSP: u32 = 0x1fff0000;
-        const SYSMEM_RESET: u32 = 0x1fff0004;
+        // Address of the DFU bootloader's vector table
+        const DFU_VECTOR_TABLE: u32 = 0x1fff0000;
 
-        let dfu_msp = core::ptr::read(SYSMEM_MSP as *const u32);
-        let putter: *const fn() = SYSMEM_RESET as *const fn();
-
-        msp::write(dfu_msp);
-        (*putter)();
+        cortex_m::asm::bootload(DFU_VECTOR_TABLE as *const u32);
     }
 }
